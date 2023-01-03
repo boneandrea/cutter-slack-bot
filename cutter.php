@@ -63,8 +63,8 @@ class CutterBot{
         return $result;
     }
 
-    function send($thread_ts,$token){
-        $r=$this->slack("オッスmunou","#general", $token["access_token"], $thread_ts);
+    function send($thread_ts,$message="オッスmunou"){
+        $r=$this->slack($message,"#general", $this->token["access_token"], $thread_ts);
         l($result=json_decode($r,true));
         return $result;
     }
@@ -93,14 +93,28 @@ class CutterBot{
             return;
         }
 
+        $this->perform($text,$thread_ts);
         if(preg_match("/無能/", $text)){
 
-            $r=$this->send($thread_ts,$this->token);
+            $r=$this->send($thread_ts);
 
             if($r["error"] ?? "" === "token_expired"){
                 $this->handleExpiredToken($this->token["refresh_token"]);
-                $this->send($thread_ts,$this->token);
+                $this->send($thread_ts);
             }
+        }
+    }
+
+    function perform($text,$thread_ts){
+        $ng=false;
+        if(preg_match("/はあちゅう/", $text)){
+            $ng=true;
+        }
+        if(preg_match("/ゆたぼん/", $text)){
+            $ng=true;
+        }
+        if($ng){
+            $r=$this->send($thread_ts,"NGワードがありました");
         }
     }
 }
