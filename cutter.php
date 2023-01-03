@@ -5,6 +5,9 @@ ini_set('xdebug.var_display_max_data', -1);
 ini_set('xdebug.var_display_max_depth', -1);
 
 define("TOKEN_FILE","access_token.json");
+define("CLIENT_ID","405980369974.4586316536706");
+define("CLIENT_SECRET","9ee2eefaa26906bb89c44f058b0a2c3c");
+
 $BOT_SELF_USERID="U04HY33JT9N";
 
 function l($msg){
@@ -12,6 +15,11 @@ function l($msg){
 }
 
 class CutterBot{
+    private $token;
+    public function __construct(){
+        $this->token=json_decode(file_get_contents(TOKEN_FILE),true);
+    }
+
     function slack($message, $channel, $token, $thread_ts)
     {
         $ch = curl_init("https://slack.com/api/chat.postMessage");
@@ -34,8 +42,8 @@ class CutterBot{
         $ch = curl_init("https://slack.com/api/oauth.v2.access");
         $data = [
             "refresh_token" => $token,
-            "client_id"=>"405980369974.4586316536706",
-            "client_secret"=>"9ee2eefaa26906bb89c44f058b0a2c3c",
+            "client_id"=>CLIENT_ID,
+            "client_secret"=>CLIENT_SECRET,
             "grant_type"=>"refresh_token",
         ];
 
@@ -55,48 +63,52 @@ class CutterBot{
         return $result;
     }
 
-
     function send($thread_ts,$token){
         $r=$this->slack("オッスmunou","#general", $token["access_token"], $thread_ts);
         l($result=json_decode($r,true));
         return $result;
     }
+
+    // for verifying endpoint
+    function verify_response(array $json){
+        $response=[
+            "token"=>$json["token"],
+            "challenge"=>$json["challenge"],
+            "type"=>"url_verification"
+        ];
+
+        header("Content-Type: application/json; charset=UTF-8");
+        echo json_encode($response);
+        exit;
+    }
+
+    function handleMessage(array $json){
+        l($event=$json["event"]);
+        $user=$json["event"]["user"];
+        $text=$json["event"]["text"];
+        $thread_ts=$event["thread_ts"] ?? "";
+
+        if($user === $BOT_SELF_USERID){
+            l("bot-self message");
+            return;
+        }
+
+        if(preg_match("/無能/", $text)){
+
+            $r=$this->send($thread_ts,$this->token);
+
+            if($r["error"] ?? "" === "token_expired"){
+                $this->handleExpiredToken($this->token["refresh_token"]);
+                $this->send($thread_ts,$this->token);
+            }
+        }
+    }
 }
 
 $x=new CutterBot();
-$token=json_decode(file_get_contents(TOKEN_FILE),true);
 $json=json_decode(file_get_contents("php://input"),true);
 
 //l(longLivedToken($token["refresh_token"])); exit;
 
-l($event=$json["event"]);
-$user=$json["event"]["user"];
-$text=$json["event"]["text"];
-$thread_ts=$event["thread_ts"] ?? "";
-
-if($user === $BOT_SELF_USERID){
-    l("bot");
-    exit;
-}
-
-if(preg_match("/無能/", $text)){
-    $r=$x->send($thread_ts,$token);
-    if($r["error"] ?? "" === "token_expired"){
-        $x->handleExpiredToken($token["refresh_token"]);
-        $x->send($thread_ts,$token);
-    }
-}
+$x->handleMessage($json);
 exit;
-
-// for verifying
-function verify_response($json){
-    $response=[
-        "token"=>$json["token"],
-        "challenge"=>$json["challenge"],
-        "type"=>"url_verification"
-    ];
-
-    header("Content-Type: application/json; charset=UTF-8");
-    echo json_encode($response);
-}
-verify_response($json);
