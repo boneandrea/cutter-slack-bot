@@ -7,8 +7,7 @@ ini_set('xdebug.var_display_max_depth', -1);
 define("TOKEN_FILE","access_token.json");
 define("CLIENT_ID","405980369974.4586316536706");
 define("CLIENT_SECRET","9ee2eefaa26906bb89c44f058b0a2c3c");
-
-$BOT_SELF_USERID="U04HY33JT9N";
+define("BOT_SELF_USERID","U04HY33JT9N");
 
 function l($msg){
     error_log(print_r($msg, true)."\n");
@@ -88,7 +87,7 @@ class CutterBot{
         $text=$json["event"]["text"];
         $thread_ts=$event["thread_ts"] ?? "";
 
-        if($user === $BOT_SELF_USERID){
+        if($user === BOT_SELF_USERID){
             l("bot-self message");
             return;
         }
