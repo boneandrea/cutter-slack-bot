@@ -9,8 +9,8 @@ define("CLIENT_ID", "405980369974.4586316536706");
 define("CLIENT_SECRET", "9ee2eefaa26906bb89c44f058b0a2c3c");
 define("BOT_SELF_USERID", "U04HY33JT9N");
 
-require("util.php");
-require("Ngword.php");
+require_once("util.php");
+require("NgWord.php");
 
 class CutterBot
 {

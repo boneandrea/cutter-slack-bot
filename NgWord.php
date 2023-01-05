@@ -1,6 +1,6 @@
 <?php
 
-require("util.php");
+require_once("util.php");
 
 class NgWord
 {
@@ -11,6 +11,7 @@ class NgWord
         $word=file_get_contents(self::FILENAME);
         $word=explode("\n", $word);
         $word=array_filter($word);
+        $word=array_map(fn ($e) =>trim($e), $word);
     }
 
     public function getWords()
