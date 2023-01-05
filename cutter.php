@@ -47,6 +47,7 @@ class CutterBot
 
         $r=$this->http_post($ch, $data);
         file_put_contents(TOKEN_FILE, $r);
+        $this->token=json_decode(file_get_contents(TOKEN_FILE), true);
     }
 
     public function http_post($ch, $data)
