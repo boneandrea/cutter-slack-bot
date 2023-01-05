@@ -9,10 +9,8 @@ define("CLIENT_ID", "405980369974.4586316536706");
 define("CLIENT_SECRET", "9ee2eefaa26906bb89c44f058b0a2c3c");
 define("BOT_SELF_USERID", "U04HY33JT9N");
 
-function l($msg)
-{
-    error_log(print_r($msg, true)."\n");
-}
+require("util.php");
+require("Ngword.php");
 
 class CutterBot
 {
@@ -113,11 +111,13 @@ class CutterBot
     public function perform($text, $thread_ts)
     {
         $ng=false;
-        if (preg_match("/はあちゅう/s", $text)) {
-            $ng=true;
-        }
-        if (preg_match("/ゆたぼん/s", $text)) {
-            $ng=true;
+        $x=new NgWord();
+        $words=$x->getWords();
+
+        foreach ($words as $w) {
+            if (preg_match("/".$w."/s", $text)) {
+                $ng=true;
+            }
         }
         if ($ng) {
             $r=$this->send($thread_ts, "NGワードがありました");
