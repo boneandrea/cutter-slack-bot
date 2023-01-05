@@ -8,6 +8,7 @@ define("TOKEN_FILE", "access_token.json");
 define("CLIENT_ID", "405980369974.4586316536706");
 define("CLIENT_SECRET", "9ee2eefaa26906bb89c44f058b0a2c3c");
 define("BOT_SELF_USERID", "U04HY33JT9N");
+define("API_ROOT", "https://slack.com/api");
 
 require_once("util.php");
 require("NgWord.php");
@@ -22,7 +23,7 @@ class CutterBot
 
     public function slack($message, $channel, $token, $thread_ts)
     {
-        $ch = curl_init("https://slack.com/api/chat.postMessage");
+        $ch = curl_init(API_ROOT."/chat.postMessage");
         $data = [
             "token" => $token,
             "channel" => $channel,
@@ -34,12 +35,9 @@ class CutterBot
         return $this->http_post($ch, $data);
     }
 
-    public function handleExpiredToken($token)
+    public function renewToken(string $token)
     {
-        // これの出力を jq .  < a.json >| access_token.json
-        // に食わせる
-
-        $ch = curl_init("https://slack.com/api/oauth.v2.access");
+        $ch = curl_init(API_ROOT."/oauth.v2.access");
         $data = [
             "refresh_token" => $token,
             "client_id"=>CLIENT_ID,
@@ -102,7 +100,7 @@ class CutterBot
             $r=$this->send($thread_ts);
 
             if ($r["error"] ?? "" === "token_expired") {
-                $this->handleExpiredToken($this->token["refresh_token"]);
+                $this->renewToken($this->token["refresh_token"]);
                 $this->send($thread_ts);
             }
         }
