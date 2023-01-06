@@ -87,8 +87,8 @@ class CutterBot
     public function handleMessage(array $json)
     {
         l($event=$json["event"]);
-        $user=$json["event"]["user"];
-        $text=$json["event"]["text"];
+        $user=$event["user"] ?? "";
+        $text=$event["text"] ?? "";
         $thread_ts=$event["thread_ts"] ?? "";
 
         if ($user === BOT_SELF_USERID) {
