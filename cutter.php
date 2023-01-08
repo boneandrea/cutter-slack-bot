@@ -4,9 +4,7 @@ ini_set('xdebug.var_display_max_children', -1);
 ini_set('xdebug.var_display_max_data', -1);
 ini_set('xdebug.var_display_max_depth', -1);
 
-define("TOKEN_FILE", "access_token.json");
 define("BOT_SELF_USERID", "U04HY33JT9N");
-define("API_ROOT", "https://slack.com/api");
 
 require_once("util.php");
 require_once("src/slack.php");
@@ -19,20 +17,6 @@ class CutterBot
     public function __construct()
     {
         $this->slack=new Slack();
-    }
-
-    public function send($thread_ts, $message="オッスmunou")
-    {
-        $r=$this->slack->slack($message, "#general", $thread_ts);
-        l($result=json_decode($r, true));
-        return $result;
-    }
-
-    public function send_image($thread_ts, $message="オッスmunou")
-    {
-        $r=$this->slack->slack_image($message, "#general", $thread_ts);
-        l($result=json_decode($r, true));
-        return $result;
     }
 
     // for verifying endpoint
@@ -71,12 +55,14 @@ class CutterBot
         if ($r["ok"]) {
             return;
         }
-
-        if (($r["error"] ?? "") === "token_expired") {
-            l("renew token.");
-            $this->slack->renewToken();
-            $this->perform($text, $thread_ts);
-            l("sent again.");
+        l($r);
+        if (0) {
+            if (($r["error"] ?? "") === "token_expired") {
+                l("renew token.");
+                $this->slack->renewToken();
+                $this->perform($text, $thread_ts);
+                l("sent again.");
+            }
         }
     }
 
@@ -99,7 +85,8 @@ class CutterBot
 
         $kuwata=$this->read_kuwata();
 
-        return $this->send(
+        return $this->slack->send(
+            "#general",
             $thread_ts,
             count($matched) .
             "個のNGワードがあったのや。".
@@ -115,11 +102,28 @@ class CutterBot
         }
 
         if (preg_match("/黒沢/s", $text)) {
-            return $this->send_image($thread_ts, "黒沢さんは重要");
+            //return $this->slack->send_image($thread_ts, "黒沢さんは重要");
+            return $this->slack->send_image(
+                "黒沢さんは重要",
+                "#general",
+                $thread_ts,
+                alt_text:'黒沢さんのセリフ頭に叩き込め.jpg',
+                image:"kurosawasan.jpg"
+            );
+        }
+
+        if (preg_match("/神/s", $text)) {
+            return $this->slack->send_image(
+                "そうでしゅねぇ〜",
+                "#general",
+                $thread_ts,
+                alt_text: "唯一神.jpg",
+                image:"god.jpg"
+            );
         }
 
         if (preg_match("/無能/s", $text)) {
-            return $this->send($thread_ts);
+            return $this->slack->send("#general", $thread_ts);
         }
         return ["ok"=>true];
     }

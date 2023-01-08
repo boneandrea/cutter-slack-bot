@@ -1,5 +1,6 @@
 #!/bin/bash
 
+cd `dirname $0`
 echo "Usage: $0 [redirect_url_in_addressbar]"
 echo
 

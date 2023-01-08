@@ -1,6 +1,6 @@
 <?php
 
-define("TOKEN_FILE", "../access_token.json");
+define("TOKEN_FILE", "access_token.json");
 define("CLIENT_ID", "405980369974.4586316536706");
 define("CLIENT_SECRET", "9ee2eefaa26906bb89c44f058b0a2c3c");
 define("API_ROOT", "https://slack.com/api");
@@ -13,7 +13,7 @@ class Slack
         $this->token=json_decode(file_get_contents(TOKEN_FILE), true);
     }
 
-    public function slack($message="オッスmunou", $channel, $thread_ts)
+    public function send($channel, $thread_ts, $message="オッスmunou")
     {
         $data = [
             "token" => $this->token["access_token"],
@@ -22,13 +22,17 @@ class Slack
             "username" => "MySlackBot",
             "thread_ts" => $thread_ts,
         ];
-        l($data);
-        return $this->http_post("/chat.postMessage", $data);
+        $r=$this->http_post("/chat.postMessage", $data);
+        l($result=json_decode($r, true));
+        return $result;
     }
 
-    public function slack_image($message="オッスmunou", $channels, $thread_ts)
+    public function send_image($message="オッスmunou", $channels, $thread_ts, $alt_text, $image)
     {
-        $cfile = new CURLFile(dirname(__FILE__)."/../image/kurosawasan.jpg", 'image/jpeg', '黒沢さんのセリフ頭に叩き込め.jpg');
+        if (!$image) {
+            return [];
+        }
+        $cfile = new CURLFile(dirname(__FILE__)."/../image/".$image, 'image/jpeg', $alt_text);
         $data = [
             "token" => $this->token["access_token"],
             "channels" => $channels, // comma separated
@@ -39,7 +43,9 @@ class Slack
             "file"=>$cfile,
         ];
 
-        return $this->http_post("/files.upload", $data, image: true);
+        $r=$this->http_post("/files.upload", $data, image: true);
+        l($result=json_decode($r, true));
+        return $result;
     }
 
     public function renewToken()
