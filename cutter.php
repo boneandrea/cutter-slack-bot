@@ -103,7 +103,5 @@ class CutterBot
 $x=new CutterBot();
 $json=json_decode(file_get_contents("php://input"), true);
 
-//l(longLivedToken($token["refresh_token"])); exit;
-
 $x->handleMessage($json);
 exit;
