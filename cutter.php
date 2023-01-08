@@ -9,6 +9,10 @@ define("BOT_SELF_USERID", "U04HY33JT9N");
 require_once("src/util.php");
 require_once("src/slack.php");
 require_once("src/NgWord.php");
+require_once("src/resolver.php");
+require_once("src/god.php");
+require_once("src/kurosawa.php");
+require_once("src/munou.php");
 
 class CutterBot
 {
@@ -50,26 +54,28 @@ class CutterBot
             return;
         }
 
-        $r=$this->perform($text, $thread_ts);
+        $resolver=new Resolver($text);
+        $resolver->add(new Kurosawa());
+        $resolver->add(new NgWord());
+        $resolver->add(new Munou());
+        $resolver->add(new God());
 
-        if ($r["ok"]) {
+        if (($action=$resolver->resolve()) === null) {
             return;
         }
+
+        $r=$action->perform($this->slack, $thread_ts);
+        if ($r["ok"] ?? "") {
+            return;
+        }
+
         l($r);
         if (($r["error"] ?? "") === "token_expired") {
             l("renew token.");
             $this->slack->renewToken();
-            $this->perform($text, $thread_ts);
+            $r=$resolver->resolve()->perform($this->slack, $thread_ts);
             l("sent again.");
         }
-    }
-
-    public function read_kuwata(): array
-    {
-        $kuwata=file_get_contents("kuwata.txt");
-        $kuwata=explode("\n", $kuwata);
-        $kuwata=array_filter($kuwata);
-        return array_map(fn ($e) =>trim($e), $kuwata);
     }
 
     public function ngword($text, $thread_ts): array
@@ -97,30 +103,6 @@ class CutterBot
         $r=$this->ngword($text, $thread_ts);
         if (!empty($r)) {
             return $r;
-        }
-
-        if (preg_match("/黒沢/s", $text)) {
-            return $this->slack->send_image(
-                "黒沢さんは重要",
-                "#general",
-                $thread_ts,
-                alt_text:'黒沢さんのセリフ頭に叩き込め.jpg',
-                image:"kurosawasan.jpg"
-            );
-        }
-
-        if (preg_match("/神/s", $text)) {
-            return $this->slack->send_image(
-                message: "そうでしゅねぇ〜",
-                channels: "#general",
-                thread_ts: $thread_ts,
-                alt_text: "唯一神.jpg",
-                image:"god.jpg"
-            );
-        }
-
-        if (preg_match("/無能/s", $text)) {
-            return $this->slack->send("#general", $thread_ts);
         }
         return ["ok"=>true];
     }
