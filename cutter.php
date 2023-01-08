@@ -49,6 +49,11 @@ class CutterBot
         exit;
     }
 
+    /**
+     * 適切に応答する
+     * access_tokenが切れていればrenewする
+     *
+     */
     public function handleMessage(array $json)
     {
         l($event=$json["event"]);
@@ -61,24 +66,21 @@ class CutterBot
             return;
         }
 
-        $this->perform($text, $thread_ts);
-        if (preg_match("/無能/s", $text)) {
-            $r=$this->send($thread_ts);
+        $r=$this->perform($text, $thread_ts);
 
-            if ($r["ok"]) {
-                return;
-            }
+        if ($r["ok"]) {
+            return;
+        }
 
-            if (($r["error"] ?? "") === "token_expired") {
-                l("renew token.");
-                $this->slack->renewToken();
-                l("send again.");
-                $this->send($thread_ts);
-            }
+        if (($r["error"] ?? "") === "token_expired") {
+            l("renew token.");
+            $this->slack->renewToken();
+            l("send again.");
+            $this->perform($text, $thread_ts);
         }
     }
 
-    public function perform($text, $thread_ts)
+    public function perform($text, $thread_ts): array
     {
         $ng=false;
         $x=new NgWord();
@@ -90,13 +92,17 @@ class CutterBot
             }
         }
         if ($ng) {
-            $r=$this->send($thread_ts, "NGワードがありました");
+            return $this->send($thread_ts, "NGワードがありました");
         }
 
         if (preg_match("/黒沢/s", $text)) {
-            $r=$this->send_image($thread_ts, "黒沢さんは重要");
-            return;
+            return $this->send_image($thread_ts, "黒沢さんは重要");
         }
+
+        if (preg_match("/無能/s", $text)) {
+            return $this->send($thread_ts);
+        }
+        return [];
     }
 }
 

@@ -13,7 +13,7 @@ class Slack
         $this->token=json_decode(file_get_contents(TOKEN_FILE), true);
     }
 
-    public function slack($message, $channel, $thread_ts)
+    public function slack($message="オッスmunou", $channel, $thread_ts)
     {
         $data = [
             "token" => $this->token["access_token"],
@@ -26,12 +26,12 @@ class Slack
         return $this->http_post("/chat.postMessage", $data, image:false);
     }
 
-    public function slack_image($message, $channel, $thread_ts)
+    public function slack_image($message="オッスmunou", $channels, $thread_ts)
     {
         $cfile = new CURLFile(dirname(__FILE__)."/../image/kurosawasan.jpg", 'image/jpeg', '黒沢さんのセリフ頭に叩き込め.jpg');
         $data = [
             "token" => $this->token["access_token"],
-            "channels" => $channel,
+            "channels" => $channels, // comma separated
             "text" => $message,
             "username" => "MySlackBot",
             "thread_ts" => $thread_ts,
@@ -53,7 +53,7 @@ class Slack
 
         $r=$this->http_post("/oauth.v2.access", $data);
 
-        // renew token
+        // renew stored token
         file_put_contents(TOKEN_FILE, $r);
         $this->token=json_decode(file_get_contents(TOKEN_FILE), true);
     }
