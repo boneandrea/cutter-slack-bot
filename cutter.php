@@ -23,7 +23,6 @@ class CutterBot
 
     public function slack($message, $channel, $token, $thread_ts)
     {
-        $ch = curl_init(API_ROOT."/chat.postMessage");
         $data = [
             "token" => $token,
             "channel" => $channel,
@@ -32,12 +31,11 @@ class CutterBot
             "thread_ts" => $thread_ts
         ];
 
-        return $this->http_post($ch, $data);
+        return $this->http_post("/chat.postMessage", $data);
     }
 
     public function renewToken(string $token)
     {
-        $ch = curl_init(API_ROOT."/oauth.v2.access");
         $data = [
             "refresh_token" => $token,
             "client_id"=>CLIENT_ID,
@@ -45,14 +43,15 @@ class CutterBot
             "grant_type"=>"refresh_token",
         ];
 
-        $r=$this->http_post($ch, $data);
+        $r=$this->http_post("/oauth.v2.access", $data);
         file_put_contents(TOKEN_FILE, $r);
         $this->token=json_decode(file_get_contents(TOKEN_FILE), true);
     }
 
-    public function http_post($ch, $data)
+    public function http_post($apiUrl, $_data)
     {
-        $data = http_build_query($data);
+        $ch = curl_init(API_ROOT.$apiUrl);
+        $data = http_build_query($_data);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
