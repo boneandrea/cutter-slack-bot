@@ -10,7 +10,7 @@ define("API_ROOT", "https://slack.com/api");
 
 require_once("util.php");
 require_once("src/slack.php");
-require("NgWord.php");
+require_once("src/NgWord.php");
 
 class CutterBot
 {
@@ -75,24 +75,43 @@ class CutterBot
         if (($r["error"] ?? "") === "token_expired") {
             l("renew token.");
             $this->slack->renewToken();
-            l("send again.");
             $this->perform($text, $thread_ts);
+            l("sent again.");
         }
+    }
+
+    public function read_kuwata(): array
+    {
+        $kuwata=file_get_contents("kuwata.txt");
+        $kuwata=explode("\n", $kuwata);
+        $kuwata=array_filter($kuwata);
+        return array_map(fn ($e) =>trim($e), $kuwata);
+    }
+
+    public function ngword($text, $thread_ts): array
+    {
+        $words=(new NgWord())->getWords();
+        $matched=array_filter($words, fn ($w) =>preg_match("/".$w."/s", $text));
+
+        if (count($matched) === 0) {
+            return [];
+        }
+
+        $kuwata=$this->read_kuwata();
+
+        return $this->send(
+            $thread_ts,
+            count($matched) .
+            "個のNGワードがあったのや。".
+            $kuwata[array_rand($kuwata, 1)]
+        );
     }
 
     public function perform($text, $thread_ts): array
     {
-        $ng=false;
-        $x=new NgWord();
-        $words=$x->getWords();
-
-        foreach ($words as $w) {
-            if (preg_match("/".$w."/s", $text)) {
-                $ng=true;
-            }
-        }
-        if ($ng) {
-            return $this->send($thread_ts, "NGワードがありました");
+        $r=$this->ngword($text, $thread_ts);
+        if (!empty($r)) {
+            return $r;
         }
 
         if (preg_match("/黒沢/s", $text)) {
@@ -102,7 +121,7 @@ class CutterBot
         if (preg_match("/無能/s", $text)) {
             return $this->send($thread_ts);
         }
-        return [];
+        return ["ok"=>true];
     }
 }
 

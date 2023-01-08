@@ -23,7 +23,7 @@ class Slack
             "thread_ts" => $thread_ts,
         ];
         l($data);
-        return $this->http_post("/chat.postMessage", $data, image:false);
+        return $this->http_post("/chat.postMessage", $data);
     }
 
     public function slack_image($message="オッスmunou", $channels, $thread_ts)
