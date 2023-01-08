@@ -28,10 +28,26 @@ class CutterBot
             "channel" => $channel,
             "text" => $message,
             "username" => "MySlackBot",
-            "thread_ts" => $thread_ts
+            "thread_ts" => $thread_ts,
+        ];
+        l($data);
+        return $this->http_post("/chat.postMessage", $data, image:false);
+    }
+
+    public function slack_image($message, $channel, $token, $thread_ts)
+    {
+        $cfile = new CURLFile(dirname(__FILE__)."/image/kurosawasan.jpg", 'image/jpeg', 'api_image.jpg');
+        $data = [
+            "token" => $token,
+            "channels" => $channel,
+            "text" => $message,
+            "username" => "MySlackBot",
+            "thread_ts" => $thread_ts,
+            'initial_comment'=>$message,
+            "file"=>$cfile,
         ];
 
-        return $this->http_post("/chat.postMessage", $data);
+        return $this->http_post("/files.upload", $data, image: true);
     }
 
     public function renewToken(string $token)
@@ -44,14 +60,22 @@ class CutterBot
         ];
 
         $r=$this->http_post("/oauth.v2.access", $data);
+
+        // renew token
         file_put_contents(TOKEN_FILE, $r);
         $this->token=json_decode(file_get_contents(TOKEN_FILE), true);
     }
 
-    public function http_post($apiUrl, $_data)
+    public function http_post($apiUrl, $data, $image=false)
     {
         $ch = curl_init(API_ROOT.$apiUrl);
-        $data = http_build_query($_data);
+        l($image);
+        if ($image) {
+            curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: multipart/form-data']);
+        } else {
+            $data = http_build_query($data);
+        }
+        l($data);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -65,6 +89,13 @@ class CutterBot
     public function send($thread_ts, $message="オッスmunou")
     {
         $r=$this->slack($message, "#general", $this->token["access_token"], $thread_ts);
+        l($result=json_decode($r, true));
+        return $result;
+    }
+
+    public function send_image($thread_ts, $message="オッスmunou")
+    {
+        $r=$this->slack_image($message, "#general", $this->token["access_token"], $thread_ts);
         l($result=json_decode($r, true));
         return $result;
     }
@@ -99,8 +130,14 @@ class CutterBot
         if (preg_match("/無能/s", $text)) {
             $r=$this->send($thread_ts);
 
-            if ($r["error"] ?? "" === "token_expired") {
+            if ($r["ok"]) {
+                return;
+            }
+
+            if (($r["error"] ?? "") === "token_expired") {
+                l("renew token.");
                 $this->renewToken($this->token["refresh_token"]);
+                l("send again.");
                 $this->send($thread_ts);
             }
         }
@@ -119,6 +156,11 @@ class CutterBot
         }
         if ($ng) {
             $r=$this->send($thread_ts, "NGワードがありました");
+        }
+
+        if (preg_match("/黒沢/s", $text)) {
+            $r=$this->send_image($thread_ts, "黒沢さんは重要");
+            return;
         }
     }
 }
