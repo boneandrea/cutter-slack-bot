@@ -28,7 +28,7 @@ class Slack
 
     public function slack_image($message, $channel, $thread_ts)
     {
-        $cfile = new CURLFile(dirname(__FILE__)."/../image/kurosawasan.jpg", 'image/jpeg', 'api_image.jpg');
+        $cfile = new CURLFile(dirname(__FILE__)."/../image/kurosawasan.jpg", 'image/jpeg', '黒沢さんのセリフ頭に叩き込め.jpg');
         $data = [
             "token" => $this->token["access_token"],
             "channels" => $channel,
