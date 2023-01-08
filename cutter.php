@@ -1,4 +1,4 @@
-<?php
+z<?php
 
 ini_set('xdebug.var_display_max_children', -1);
 ini_set('xdebug.var_display_max_data', -1);
@@ -6,7 +6,7 @@ ini_set('xdebug.var_display_max_depth', -1);
 
 define("BOT_SELF_USERID", "U04HY33JT9N");
 
-require_once("util.php");
+require_once("src/util.php");
 require_once("src/slack.php");
 require_once("src/NgWord.php");
 
@@ -56,13 +56,11 @@ class CutterBot
             return;
         }
         l($r);
-        if (0) {
-            if (($r["error"] ?? "") === "token_expired") {
-                l("renew token.");
-                $this->slack->renewToken();
-                $this->perform($text, $thread_ts);
-                l("sent again.");
-            }
+        if (($r["error"] ?? "") === "token_expired") {
+            l("renew token.");
+            $this->slack->renewToken();
+            $this->perform($text, $thread_ts);
+            l("sent again.");
         }
     }
 
@@ -102,7 +100,6 @@ class CutterBot
         }
 
         if (preg_match("/黒沢/s", $text)) {
-            //return $this->slack->send_image($thread_ts, "黒沢さんは重要");
             return $this->slack->send_image(
                 "黒沢さんは重要",
                 "#general",
@@ -114,9 +111,9 @@ class CutterBot
 
         if (preg_match("/神/s", $text)) {
             return $this->slack->send_image(
-                "そうでしゅねぇ〜",
-                "#general",
-                $thread_ts,
+                message: "そうでしゅねぇ〜",
+                channels: "#general",
+                thread_ts: $thread_ts,
                 alt_text: "唯一神.jpg",
                 image:"god.jpg"
             );
