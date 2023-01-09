@@ -6,8 +6,6 @@ ini_set('xdebug.var_display_max_children', -1);
 ini_set('xdebug.var_display_max_data', -1);
 ini_set('xdebug.var_display_max_depth', -1);
 
-define("BOT_SELF_USERID", "U04HY33JT9N");
-
 require_once("src/util.php");
 
 use App\Resolver;
@@ -16,6 +14,7 @@ use App\Action\Munou;
 use App\Action\Kurosawa;
 use App\Action\NgWord;
 use App\Action\God;
+use Dotenv\Dotenv;
 
 class CutterBot
 {
@@ -24,6 +23,9 @@ class CutterBot
     public function __construct()
     {
         $this->slack=new Slack();
+
+        $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
+        $dotenv->load();
     }
 
     // for verifying endpoint
@@ -52,7 +54,7 @@ class CutterBot
         $text=$event["text"] ?? "";
         $thread_ts=$event["thread_ts"] ?? "";
 
-        if ($user === BOT_SELF_USERID) {
+        if ($user === $_ENV["BOT_SELF_USERID"] ?? "") {
             l("bot-self message");
             return;
         }

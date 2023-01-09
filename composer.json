@@ -11,6 +11,7 @@
         }
     ],
     "require": {
-        "friendsofphp/php-cs-fixer": "^3.13"
+        "friendsofphp/php-cs-fixer": "^3.13",
+        "vlucas/phpdotenv": "^5.5"
     }
 }
