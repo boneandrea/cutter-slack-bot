@@ -1,8 +1,8 @@
 <?php
 
-namespace App;
+namespace App\Action;
 
-interface Iperform
+interface IPerform
 {
     public function test(string $text);
     public function perform($slack, string $text);

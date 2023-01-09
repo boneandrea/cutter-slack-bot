@@ -10,12 +10,12 @@ define("BOT_SELF_USERID", "U04HY33JT9N");
 
 require_once("src/util.php");
 
-use App\NgWord;
 use App\Resolver;
-use App\God;
 use App\Slack;
-use App\Munou;
-use App\Kurosawa;
+use App\Action\Munou;
+use App\Action\Kurosawa;
+use App\Action\NgWord;
+use App\Action\God;
 
 class CutterBot
 {

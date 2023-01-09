@@ -2,6 +2,8 @@
 
 namespace App;
 
+use App\Action\IPerform;
+
 class Resolver
 {
     private $action=[];
@@ -10,7 +12,7 @@ class Resolver
     {
         $this->text=$text;
     }
-    public function add(Iperform $perform)
+    public function add(IPerform $perform)
     {
         $this->action[]=$perform;
     }

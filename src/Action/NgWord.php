@@ -1,8 +1,8 @@
 <?php
 
-namespace App;
+namespace App\Action;
 
-class NgWord implements Iperform
+class NgWord implements IPerform
 {
     public const NGWORD_FILENAME="ng_words.txt";
     public const KUWATA_FILENAME="kuwata.txt";

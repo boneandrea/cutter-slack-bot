@@ -1,8 +1,8 @@
 <?php
 
-namespace App;
+namespace App\Action;
 
-class Kurosawa implements Iperform
+class Kurosawa implements IPerform
 {
     public function test(string $text)
     {

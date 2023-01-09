@@ -1,8 +1,8 @@
 <?php
 
-namespace App;
+namespace App\Action;
 
-class God implements Iperform
+class God implements IPerform
 {
     public function test(string $text)
     {
