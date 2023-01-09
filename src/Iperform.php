@@ -1,5 +1,7 @@
 <?php
 
+namespace App;
+
 interface Iperform
 {
     public function test(string $text);

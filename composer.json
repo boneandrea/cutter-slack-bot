@@ -2,7 +2,7 @@
     "name": "ubuntu/slack",
     "autoload": {
         "psr-4": {
-            "Ubuntu\\Slack\\": "src/"
+            "App\\": "src/"
         }
     },
     "authors": [

@@ -1,4 +1,6 @@
-z<?php
+<?php
+
+namespace App;
 
 ini_set('xdebug.var_display_max_children', -1);
 ini_set('xdebug.var_display_max_data', -1);
@@ -7,12 +9,13 @@ ini_set('xdebug.var_display_max_depth', -1);
 define("BOT_SELF_USERID", "U04HY33JT9N");
 
 require_once("src/util.php");
-require_once("src/slack.php");
-require_once("src/NgWord.php");
-require_once("src/resolver.php");
-require_once("src/god.php");
-require_once("src/kurosawa.php");
-require_once("src/munou.php");
+
+use App\NgWord;
+use App\Resolver;
+use App\God;
+use App\Slack;
+use App\Munou;
+use App\Kurosawa;
 
 class CutterBot
 {

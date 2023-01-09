@@ -1,6 +1,6 @@
 <?php
 
-require_once("Iperform.php");
+namespace App;
 
 class God implements Iperform
 {

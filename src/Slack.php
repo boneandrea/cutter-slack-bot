@@ -1,5 +1,7 @@
 <?php
 
+namespace App;
+
 define("TOKEN_FILE", "access_token.json");
 define("CLIENT_ID", "405980369974.4586316536706");
 define("CLIENT_SECRET", "9ee2eefaa26906bb89c44f058b0a2c3c");
@@ -32,7 +34,7 @@ class Slack
         if (!$image) {
             return [];
         }
-        $cfile = new CURLFile(dirname(__FILE__)."/../image/".$image, 'image/jpeg', $alt_text);
+        $cfile = new \CURLFile(dirname(__FILE__)."/../image/".$image, 'image/jpeg', $alt_text);
         $data = [
             "token" => $this->token["access_token"],
             "channels" => $channels, // comma separated
