@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App;
 
 use App\Action\IPerform;
@@ -7,20 +9,16 @@ use App\Action\IPerform;
 class Resolver
 {
     private $action=[];
-    private $text;
-    public function __construct(string $text)
-    {
-        $this->text=$text;
-    }
+
     public function add(IPerform $perform)
     {
         $this->action[]=$perform;
     }
 
-    public function resolve()
+    public function resolve(string $text)
     {
         foreach ($this->action as $action) {
-            if ($action->test($this->text)) {
+            if ($action->test($text)) {
                 return $action;
             }
         }

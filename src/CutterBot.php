@@ -57,13 +57,9 @@ class CutterBot
             return;
         }
 
-        $resolver=new Resolver($text);
-        $resolver->add(new Kurosawa());
-        $resolver->add(new NgWord());
-        $resolver->add(new Munou());
-        $resolver->add(new God());
+        $resolver=$this->initResolver();
 
-        if (($action=$resolver->resolve()) === null) {
+        if (($action=$resolver->resolve($text)) === null) {
             return;
         }
 
@@ -80,5 +76,16 @@ class CutterBot
             $r=$action->perform($this->slack, $thread_ts);
             l("sent again.");
         }
+    }
+
+    public function initResolver(): Resolver
+    {
+        $resolver=new Resolver();
+        $resolver->add(new Kurosawa());
+        $resolver->add(new NgWord());
+        $resolver->add(new Munou());
+        $resolver->add(new God());
+
+        return $resolver;
     }
 }

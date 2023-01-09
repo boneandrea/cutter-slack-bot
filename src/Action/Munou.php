@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Action;
 
-class Munou implements IPerform
+class Munou implements Iperform
 {
     public function test(string $text)
     {

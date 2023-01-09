@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Action;
 
-class NgWord implements IPerform
+class NgWord implements Iperform
 {
     public const NGWORD_FILENAME="ng_words.txt";
     public const KUWATA_FILENAME="kuwata.txt";
@@ -32,16 +34,18 @@ class NgWord implements IPerform
 
     public function read_ngwords()
     {
-        $words=file_get_contents(self::NGWORD_FILENAME);
-        $words=explode("\n", $words);
-        $words=array_filter($words);
-        return array_map(fn ($e) =>trim($e), $words);
+        return $this->read_file(self::NGWORD_FILENAME);
     }
     public function read_kuwata(): array
     {
-        $kuwata=file_get_contents(self::KUWATA_FILENAME);
-        $kuwata=explode("\n", $kuwata);
-        $kuwata=array_filter($kuwata);
-        return array_map(fn ($e) =>trim($e), $kuwata);
+        return $this->read_file(self::KUWATA_FILENAME);
+    }
+
+    public function read_file(string $filename): array
+    {
+        $words=file_get_contents($filename);
+        $words=explode("\n", $words);
+        $words=array_filter($words);
+        return array_map(fn ($e) =>trim($e), $words);
     }
 }
