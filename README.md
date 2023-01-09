@@ -17,4 +17,4 @@ SECRET=xxxxxxxxxxxxxxxxxxxxxxxxxx
 BOT_SELF_USERID=zzzzzzzzzzz
 ```
 
-SlackBotはLINEbotと違い、自分の発言も飛んでくるので `BOT_SELF_USERID` で避けないとループする。
+SlackBotはLINEbotと違い、自分の発言も飛んでくるので`BOT_SELF_USERID`で避けないとループする。
