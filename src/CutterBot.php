@@ -14,6 +14,7 @@ use App\Action\Munou;
 use App\Action\Kurosawa;
 use App\Action\NgWord;
 use App\Action\God;
+use App\Action\Shiga;
 use Dotenv\Dotenv;
 
 class CutterBot
@@ -87,6 +88,7 @@ class CutterBot
         $resolver->add(new NgWord());
         $resolver->add(new Munou());
         $resolver->add(new God());
+        $resolver->add(new Shiga());
 
         return $resolver;
     }
