@@ -56,7 +56,7 @@ class CutterBot
         $text=$event["text"] ?? "";
         $thread_ts=$event["thread_ts"] ?? "";
 
-        if ($user === $_ENV["BOT_SELF_USERID"] ?? "") {
+        if (isset($event["bot_profile"])){
             l("bot-self message");
             return;
         }
