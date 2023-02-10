@@ -24,13 +24,13 @@ function return_challenge($json)
 }
 
 try {
-    $app_auth=false;
     $json=json_decode(file_get_contents("php://input") ?? "{}", true);
 
     // 認証時有効にする
     // Event Subscriptions
-    if ($app_auth) {
-        l($json["challenge"]);
+    $app_auth_challenge=true;
+    $app_auth_challenge=false;
+    if ($app_auth_challenge) {
         return_challenge($json);
     }
 
