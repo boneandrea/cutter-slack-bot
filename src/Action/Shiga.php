@@ -8,7 +8,7 @@ class Shiga implements IPerform
 {
     public function test(string $text)
     {
-        return preg_match("/滋賀/s", $text);
+        return preg_match("/滋賀/", $text);
     }
 
     public function perform($slack, string $thread_ts)
