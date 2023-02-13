@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Action;
 
-class Shiga implements Iperform
+class Shiga implements IPerform
 {
     public function test(string $text)
     {

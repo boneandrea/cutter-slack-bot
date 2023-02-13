@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Action;
 
-class Munou implements Iperform
+class Munou implements IPerform
 {
     public function test(string $text)
     {
