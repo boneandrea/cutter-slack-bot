@@ -51,7 +51,7 @@ class CutterBot
      */
     public function handleMessage(array $json)
     {
-        l($event=$json["event"]);
+        $event=$json["event"] ?? [];
         $user=$event["user"] ?? "";
         $text=$event["text"] ?? "";
         $thread_ts=$event["thread_ts"] ?? "";
@@ -60,7 +60,7 @@ class CutterBot
             l("bot-self message");
             return;
         }
-
+        l($event);
         $resolver=$this->initResolver();
 
         if (($action=$resolver->resolve($text)) === null) {
