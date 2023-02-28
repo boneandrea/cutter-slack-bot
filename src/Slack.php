@@ -6,7 +6,7 @@ namespace App;
 
 define("TOKEN_FILE", "access_token.json");
 define("CLIENT_ID", "405980369974.4586316536706");
-define("CLIENT_SECRET", "9ee2eefaa26906bb89c44f058b0a2c3c");
+define("CLIENT_SECRET", "d59a0cf9e44f88c2797056656997d8d5");
 define("API_ROOT", "https://slack.com/api");
 
 class Slack
