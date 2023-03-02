@@ -8,7 +8,6 @@ class NgWord implements Iperform
 {
     public const NGWORD_FILENAME="ng_words.txt";
     public const KUWATA_FILENAME="kuwata.txt";
-    private $words=[];
     private $matched;
 
     public function test(string $text)
