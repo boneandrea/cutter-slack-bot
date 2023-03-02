@@ -53,14 +53,15 @@ class CutterBot
     {
         $event=$json["event"] ?? [];
         $user=$event["user"] ?? "";
+        $app_id=$event["app_id"] ?? "";
         $text=$event["text"] ?? "";
         $thread_ts=$event["thread_ts"] ?? "";
 
-        if (isset($event["bot_profile"])){
-            l("bot-self message");
+        if ($this->isBot($json)) {
+            l("bot-self message!!");
             return;
         }
-        l($event);
+
         $resolver=$this->initResolver();
 
         if (($action=$resolver->resolve($text)) === null) {
@@ -73,7 +74,6 @@ class CutterBot
             return;
         }
 
-        l($r);
         if (($r["error"] ?? "") === "token_expired") {
             l("renew token.");
             $this->slack->renewToken();
@@ -93,5 +93,25 @@ class CutterBot
         $resolver->add(new Muzai());
 
         return $resolver;
+    }
+
+    public function isBot(array $json): bool
+    {
+        $event=$json["event"] ?? [];
+        $user=$event["user"] ?? "";
+        $app_id=$event["app_id"] ?? "";
+        $text=$event["text"] ?? "";
+
+        if ($user === $_ENV["BOT_SELF_USERID"]) {
+            return true;
+        }
+
+        if ($files=$event["files"] ?? false) {
+            if ($files[0]["user"]===$_ENV["BOT_SELF_USERID"]) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

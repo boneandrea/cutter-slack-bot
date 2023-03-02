@@ -27,7 +27,8 @@ class Slack
             "thread_ts" => $thread_ts,
         ];
         $r=$this->http_post("/chat.postMessage", $data);
-        l($result=json_decode($r, true));
+        $result=json_decode($r, true);
+        //l($result);
         return $result;
     }
 
@@ -48,7 +49,8 @@ class Slack
         ];
 
         $r=$this->http_post("/files.upload", $data, image: true);
-        l($result=json_decode($r, true));
+        $result=json_decode($r, true);
+        //l($result);
         return $result;
     }
 
