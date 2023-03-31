@@ -14,6 +14,7 @@ use App\Action\Munou;
 use App\Action\Kurosawa;
 use App\Action\NgWord;
 use App\Action\God;
+use App\Action\Takasu;
 use App\Action\Muzai;
 use App\Action\Shiga;
 use Dotenv\Dotenv;
@@ -89,6 +90,7 @@ class CutterBot
         $resolver->add(new God());
         $resolver->add(new Shiga());
         $resolver->add(new Muzai());
+        $resolver->add(new Takasu());
 
         return $resolver;
     }
