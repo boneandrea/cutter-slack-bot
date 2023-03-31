@@ -17,6 +17,7 @@ class Resolver
 
     public function resolve(string $text)
     {
+        $text= mb_convert_kana($text, "HV");
         foreach ($this->action as $action) {
             if ($action->test($text)) {
                 return $action;
