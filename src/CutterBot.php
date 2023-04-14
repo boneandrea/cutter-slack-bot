@@ -76,11 +76,8 @@ class CutterBot
         if (($r["error"] ?? "") === "token_expired") {
             l("renew token.");
             $this->slack->renewToken();
-            // 2回送信してしまうのを回避
-            if (0) {
-                $r=$action->perform($this->slack, $thread_ts);
-                l("sent again.");
-            }
+            $r=$action->perform($this->slack, $thread_ts);
+            l("sent again.");
         }
     }
 
